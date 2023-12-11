@@ -20,4 +20,4 @@ You can install this plugin via. the Homebridge UI or by running the command
 
 1. Configure the IP address of the Crestron, which is usually displayed on the 16x2 LCD on top of the unit.
 
-!(assets/configure-ip.png)
+![](assets/configure-ip.png)
