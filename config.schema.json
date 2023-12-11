@@ -1,15 +1,54 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "Crestron",
   "pluginType": "platform",
   "singular": true,
   "schema": {
-    "type": "object",
-    "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "required": true,
-        "default": "Example Dynamic Platform"
+    "ip": {
+      "title": "IP Address",
+      "type": "string",
+      "required": true,
+      "format": "ipv4"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "title": "Inputs",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "ID",
+            "type": "number",
+            "placeholder": "Enter input ID...",
+            "required": true
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "placeholder": "Enter input name...",
+            "required": true
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "title": "Outputs",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "ID",
+            "type": "number",
+            "placeholder": "Enter output ID...",
+            "required": true
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "placeholder": "Enter output name...",
+            "required": true
+          }
+        }
       }
     }
   }

@@ -3,7 +3,7 @@ import { Telnet } from "telnet-client";
 
 type Command = {
   resolve: (value: string) => void;
-  reject: (reason?: any) => void;
+  reject: (reason?: unknown) => void;
   cmd: string;
 };
 
@@ -15,7 +15,7 @@ type ConnectionOptions = {
 };
 
 export class CommandQueue {
-  private isProcessing: boolean = false;
+  private isProcessing = false;
   private queue: Command[] = [];
 
   private client: Telnet;

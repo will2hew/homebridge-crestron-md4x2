@@ -11,10 +11,10 @@
   },
   "ignorePatterns": ["dist"],
   "rules": {
-    "quotes": ["double"],
+    "quotes": "warn",
     "indent": ["warn", 2, { "SwitchCase": 1 }],
-    "semi": ["on"],
-    "comma-dangle": ["warn", "always-multiline"],
+    "semi": 1,
+    "comma-dangle": "off",
     "dot-notation": "off",
     "eqeqeq": "warn",
     "curly": ["warn", "all"],

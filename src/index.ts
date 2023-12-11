@@ -1,41 +1,32 @@
 import { API, Logger, PlatformAccessory, PlatformConfig } from "homebridge";
 import { CommandQueue } from "./crestron";
 
-const PLUGIN_NAME = "@hewittwill/homebridge-enfield-av";
-const PLATFORM_NAME = "EnfieldAV";
+const PLUGIN_NAME = "@will2hew/homebridge-crestron-md4x2";
+const PLATFORM_NAME = "Crestron";
 
-type InputOutputType = {
+type Device = {
   id: number;
   name: string;
 };
 
-const OUTPUTS: InputOutputType[] = [
-  { id: 1, name: "Lounge TV" },
-  { id: 2, name: "Bedroom TV" },
-];
-
-const INPUTS: InputOutputType[] = [
-  { id: 2, name: "PS5" },
-  { id: 3, name: "Apple TV" },
-  { id: 4, name: "PS2" },
-];
-
 module.exports = (api) => {
-  api.registerPlatform(PLATFORM_NAME, EnfieldAVPlugin);
+  api.registerPlatform(PLATFORM_NAME, CrestronPlugin);
 };
 
-interface EnfieldAVConfig extends PlatformConfig {
+interface CrestronConfig extends PlatformConfig {
   ip: string;
+  inputs: Device[];
+  outputs: Device[];
 }
 
-class EnfieldAVPlugin {
+class CrestronPlugin {
   private readonly accessories: PlatformAccessory[] = [];
 
   private readonly commandQueue: CommandQueue;
 
   constructor(
     public readonly log: Logger,
-    public readonly config: EnfieldAVConfig,
+    public readonly config: CrestronConfig,
     public readonly api: API
   ) {
     this.log = log;
@@ -52,16 +43,22 @@ class EnfieldAVPlugin {
       log
     );
 
-    for (const output of OUTPUTS) {
+    if (this.config.inputs.length === 0 || this.config.outputs.length === 0) {
+      this.log.warn(
+        "No inputs or outputs configured in config.json. Using default values instead."
+      );
+    }
+
+    for (const output of this.config.outputs) {
       this.accessories.push(this.createOutputAccessory(output));
     }
 
     this.api.publishExternalAccessories(PLUGIN_NAME, this.accessories);
   }
 
-  private createOutputAccessory(output: InputOutputType): PlatformAccessory {
+  private createOutputAccessory(output: Device): PlatformAccessory {
     const uuid = this.api.hap.uuid.generate(
-      `homebridge:enfield-av-${output.id}`
+      `homebridge:crestron-output-${output.id}`
     );
 
     const accessory = new this.api.platformAccessory(output.name, uuid);
@@ -104,7 +101,7 @@ class EnfieldAVPlugin {
         } else {
           this.log.debug(
             `${output.name} is connected to ${
-              INPUTS.find((val) => val.id === connectedInput)?.name
+              this.config.inputs.find((val) => val.id === connectedInput)?.name
             }`
           );
           return connectedInput;
@@ -124,67 +121,14 @@ class EnfieldAVPlugin {
     // handle remote control input
     service
       .getCharacteristic(this.api.hap.Characteristic.RemoteKey)
-      .onSet((newValue) => {
-        switch (newValue) {
-          case this.api.hap.Characteristic.RemoteKey.REWIND: {
-            this.log.info("set Remote Key Pressed: REWIND");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.FAST_FORWARD: {
-            this.log.info("set Remote Key Pressed: FAST_FORWARD");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.NEXT_TRACK: {
-            this.log.info("set Remote Key Pressed: NEXT_TRACK");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.PREVIOUS_TRACK: {
-            this.log.info("set Remote Key Pressed: PREVIOUS_TRACK");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.ARROW_UP: {
-            this.log.info("set Remote Key Pressed: ARROW_UP");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.ARROW_DOWN: {
-            this.log.info("set Remote Key Pressed: ARROW_DOWN");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.ARROW_LEFT: {
-            this.log.info("set Remote Key Pressed: ARROW_LEFT");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.ARROW_RIGHT: {
-            this.log.info("set Remote Key Pressed: ARROW_RIGHT");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.SELECT: {
-            this.log.info("set Remote Key Pressed: SELECT");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.BACK: {
-            this.log.info("set Remote Key Pressed: BACK");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.EXIT: {
-            this.log.info("set Remote Key Pressed: EXIT");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.PLAY_PAUSE: {
-            this.log.info("set Remote Key Pressed: PLAY_PAUSE");
-            break;
-          }
-          case this.api.hap.Characteristic.RemoteKey.INFORMATION: {
-            this.log.info("set Remote Key Pressed: INFORMATION");
-            break;
-          }
-        }
+      .onSet(() => {
+        this.log.warn("Output control is not implemented yet");
       });
 
-    INPUTS.forEach((input) => {
+    this.config.inputs.forEach((input) => {
       const inputService = accessory.addService(
         this.api.hap.Service.InputSource,
-        `hdmi${input.id}`,
+        `hdmi-${input.id}`,
         input.name
       );
 
@@ -209,8 +153,8 @@ class EnfieldAVPlugin {
     return accessory;
   }
 
-  private getInputById(id: number): InputOutputType {
-    const input = INPUTS.find((val) => val.id === id);
+  private getInputById(id: number): Device {
+    const input = this.config.inputs.find((val) => val.id === id);
 
     if (input) {
       return input;
