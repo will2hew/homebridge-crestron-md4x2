@@ -2,8 +2,8 @@
   "private": false,
   "displayName": "@will2hew/homebridge-crestron-md4x2",
   "name": "@will2hew/homebridge-crestron-md4x2",
-  "version": "0.1.0",
-  "description": "A short description about what your plugin does.",
+  "version": "0.1.2",
+  "description": "Control Crestron HDMI Switchers using HomeKit.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

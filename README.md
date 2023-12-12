@@ -21,3 +21,13 @@ You can install this plugin via. the Homebridge UI or by running the command
 1. Configure the IP address of the Crestron, which is usually displayed on the 16x2 LCD on top of the unit.
 
 ![](assets/configure-ip.png)
+
+2. Configure the Inputs of the Crestron, using the ID to indicate what physical port the input has been connected to.
+
+![](assets/configure-inputs.png)
+
+2. Configure the Outputs of the Crestron, using the ID to indicate what physical port the output has been connected to.
+
+![](assets/configure-outputs.png)
+
+## Usage

@@ -44,8 +44,18 @@ class CrestronPlugin {
     );
 
     if (this.config.inputs.length === 0 || this.config.outputs.length === 0) {
-      this.log.warn(
-        "No inputs or outputs configured in config.json. Using default values instead."
+      this.log.warn("No inputs or outputs configured in config.json.");
+    } else {
+      this.log.info(
+        `Configured with the following inputs: ${this.config.inputs
+          .map((input) => input.name)
+          .join(", ")}`
+      );
+
+      this.log.info(
+        `Configured with the following outputs: ${this.config.outputs
+          .map((input) => input.name)
+          .join(", ")}`
       );
     }
 
